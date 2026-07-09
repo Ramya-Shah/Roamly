@@ -1,0 +1,21 @@
+# Project Alpha-Forge - dashboard_ui image
+#
+# Multi-stage build: compile the Vite/React app, then serve the static
+# bundle with nginx, which also reverse-proxies /api to dashboard_api so
+# the browser only ever talks to one same-origin host (no CORS needed in
+# production, even though api_server.py also allows it for local dev).
+
+FROM node:20-slim AS build
+WORKDIR /app
+# NOTE: building behind a corporate TLS-inspection proxy may require trusting
+# that proxy's CA here (COPY it in + set NODE_EXTRA_CA_CERTS) for npm to
+# reach registry.npmjs.org - not needed on an unintercepted network.
+COPY frontend/package.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
+
+FROM nginx:1.27-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80

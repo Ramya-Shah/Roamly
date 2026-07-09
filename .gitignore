@@ -1,0 +1,11 @@
+.env
+memory_db/*.duckdb
+memory_db/*.db
+sandbox_workspace/*.py
+!sandbox_workspace/.gitkeep
+historical_data/*.npz
+!historical_data/.gitkeep
+__pycache__/
+*.pyc
+frontend/node_modules/
+frontend/dist/

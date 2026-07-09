@@ -1,0 +1,22 @@
+# Project Alpha-Forge - orchestrator image
+#
+# Hosts the LangGraph agent pipeline. This container never touches strategy
+# code or historical market data directly - it only speaks to the sandbox's
+# FastMCP tools over SSE across the private alpha_forge_net bridge network.
+
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir \
+        langgraph \
+        langchain \
+        langchain-mcp-adapters \
+        langchain-openai \
+        langchain-anthropic \
+        duckdb
+
+COPY orchestrator.py .
+COPY memory_manager.py .
+
+ENTRYPOINT ["python", "orchestrator.py"]

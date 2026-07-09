@@ -1,0 +1,30 @@
+# Project Alpha-Forge - dashboard_api image
+#
+# FastAPI wrapper around the same LangGraph pipeline orchestrator.py runs
+# from the CLI, exposing it over HTTP + SSE for the React dashboard. Like
+# the orchestrator container, this has no direct filesystem access to
+# historical data and only mounts sandbox_workspace read-only, purely to
+# serve generated strategy source back to the browser for display.
+
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir \
+        fastapi \
+        "uvicorn[standard]" \
+        sse-starlette \
+        langgraph \
+        langchain \
+        langchain-mcp-adapters \
+        langchain-openai \
+        langchain-anthropic \
+        duckdb
+
+COPY orchestrator.py .
+COPY memory_manager.py .
+COPY api_server.py .
+
+EXPOSE 8001
+
+ENTRYPOINT ["uvicorn", "api_server:app", "--host", "0.0.0.0", "--port", "8001"]
