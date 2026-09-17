@@ -632,7 +632,7 @@ export const SEED_EXPERIENCES: Experience[] = [
   },
 
   // ==========================================
-  // EXPANDED CITYPULSE EXPERIENCES (50+ TOTAL)
+  // EXPANDED ROAMLY EXPERIENCES (50+ TOTAL)
   // ==========================================
   // Bengaluru
   {

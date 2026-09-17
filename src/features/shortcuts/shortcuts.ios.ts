@@ -11,7 +11,7 @@ import {
  * 1. iOS uses UIApplicationShortcutItem (iOS 9.0+) for 3D Touch / Haptic Touch quick actions.
  * 2. In Expo, expo-quick-actions sets dynamic shortcut items via:
  *    UIApplication.shared.shortcutItems = [UIApplicationShortcutItem(...)]
- * 3. When the user long-presses CityPulse on the iOS Home Screen, "Plan My Day" and "Explore Nearby" appear.
+ * 3. When the user long-presses Roamly on the iOS Home Screen, "Plan My Day" and "Explore Nearby" appear.
  * 4. Tapping dispatches performActionForShortcutItem, which expo-quick-actions captures,
  *    triggering the JavaScript QuickActions listener and pushing the route in Expo Router.
  */

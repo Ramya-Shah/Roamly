@@ -11,8 +11,8 @@ export interface AppShortcut {
 }
 
 export const EXPLORE_NEARBY_SHORTCUT: AppShortcut = {
-  id: 'citypulse_explore_nearby',
-  type: 'citypulse.explore_nearby',
+  id: 'roamly_explore_nearby',
+  type: 'roamly.explore_nearby',
   title: 'Explore Nearby',
   subtitle: 'Find attractions near your current spot',
   icon: 'location',
@@ -22,8 +22,8 @@ export const EXPLORE_NEARBY_SHORTCUT: AppShortcut = {
 };
 
 export const PLAN_MY_DAY_SHORTCUT: AppShortcut = {
-  id: 'citypulse_plan_day',
-  type: 'citypulse.plan_day',
+  id: 'roamly_plan_day',
+  type: 'roamly.plan_day',
   title: 'Plan My Day',
   subtitle: 'AI-curated experience planner',
   icon: 'compass',

@@ -22,7 +22,7 @@ export function buildServer() {
 
   // Health check endpoint
   fastify.get('/health', async () => {
-    return { status: 'ok', app: 'CityPulse API', timestamp: new Date().toISOString() };
+    return { status: 'ok', app: 'Roamly API', timestamp: new Date().toISOString() };
   });
 
   // Register API routes
