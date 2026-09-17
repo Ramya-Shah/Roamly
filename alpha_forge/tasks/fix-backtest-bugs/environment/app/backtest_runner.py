@@ -78,42 +78,11 @@ def _load_strategy_instance(strategy_path: Path) -> BaseMarketMakingStrategy:
     return instance
 
 
-def _min_positive_increment(values: np.ndarray, fallback: float) -> float:
-    """Smallest positive gap between distinct values, or ``fallback`` if undetectable."""
-    positive = values[values > 0]
-    if positive.size < 2:
-        return fallback
-    unique_sorted = np.unique(positive)
-    if unique_sorted.size < 2:
-        return fallback
-    diffs = np.diff(unique_sorted)
-    diffs = diffs[diffs > 1e-12]  # drop float-noise near-zero gaps between "equal" values
-    if diffs.size == 0:
-        return fallback
-    return float(np.round(np.min(diffs), 10))
-
-
 def _detect_tick_and_lot_size(
     dataset_path: Path, sample_size: int = 500_000
 ) -> tuple[float, float]:
-    """Infer the real tick and lot size directly from the replay data.
-
-    ``mcp_server.run_backtest``'s signature is fixed to just
-    ``(strategy_file, dataset_name)`` - it has no per-asset tick/lot size
-    parameter to plumb through. A hardcoded default silently corrupts any
-    asset priced differently from it: e.g. SUI trades in $0.0001 increments,
-    so a $0.01 default tick grid rounds every strategy's distinct quoted
-    price down onto the same handful of levels, making genuinely different
-    quoting logic produce identical fills and identical Sharpe. Detecting
-    the real increments from the data itself self-corrects for whatever
-    asset is loaded, with no extra plumbing required.
-    """
-    with np.load(dataset_path) as npz:
-        data = npz["data"][:sample_size]
-
-    tick_size = _min_positive_increment(data["px"], fallback=0.01)
-    lot_size = _min_positive_increment(data["qty"], fallback=0.001)
-    return tick_size, lot_size
+    """Infer tick and lot size for the replay asset from the dataset."""
+    return 0.01, 0.001
 
 
 def _build_asset(
@@ -142,7 +111,7 @@ def _build_asset(
         BacktestAsset()
         .data([str(dataset_path)])
         .linear_asset(1.0)
-        .constant_order_latency(latency_ns, latency_ns)
+        .constant_latency(latency_ns, latency_ns)
         .risk_adverse_queue_model()
         .no_partial_fill_exchange()
         .trading_value_fee_model(maker_fee, taker_fee)
@@ -208,13 +177,7 @@ def _run_replay(
 
             best_bid = float(depth.best_bid)
             best_ask = float(depth.best_ask)
-            # `not (x > 0)` rather than `x <= 0`: real order-book data can
-            # momentarily produce NaN (e.g. a side going briefly empty), and
-            # NaN comparisons are always False under IEEE 754 - `NaN <= 0` is
-            # False, silently letting a poisoned mid_price/equity through for
-            # the rest of the replay. `not (NaN > 0)` is True, so this form
-            # correctly skips the tick instead.
-            if not (best_bid > 0) or not (best_ask > 0) or not (best_ask > best_bid):
+            if best_bid <= 0 or best_ask <= 0 or best_ask <= best_bid:
                 continue
             mid_price = (best_bid + best_ask) / 2.0
 

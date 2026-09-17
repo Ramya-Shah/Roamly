@@ -1,11 +1,76 @@
+# ===========================
+# Roamly — .gitignore
+# ===========================
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output
+dist/
+server/dist/
+frontend/dist/
+*.tsbuildinfo
+
+# Expo
+.expo/
+expo-env.d.ts
+
+# Environment secrets
 .env
+server/.env
+
+# Native
+ios/
+android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# ===========================
+# AlphaForge (moved to alpha_forge/)
+# ===========================
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# AlphaForge data & runtime dirs (at root — legacy, now in alpha_forge/)
 memory_db/*.duckdb
 memory_db/*.db
 sandbox_workspace/*.py
 !sandbox_workspace/.gitkeep
 historical_data/*.npz
 !historical_data/.gitkeep
-__pycache__/
-*.pyc
-frontend/node_modules/
-frontend/dist/
+alpha_forge/memory_db/*.duckdb
+alpha_forge/memory_db/*.db
+alpha_forge/sandbox_workspace/*.py
+!alpha_forge/sandbox_workspace/.gitkeep
+alpha_forge/historical_data/*.npz
+!alpha_forge/historical_data/.gitkeep
+alpha_forge/frontend/node_modules/
+alpha_forge/frontend/dist/
+
+# Large HTML files
+*.html
+Triton 2.0 - Terminal Task Authoring_files/

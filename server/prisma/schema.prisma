@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Experience {
+  id              String         @id @default(uuid())
+  title           String
+  description     String
+  category        String
+  city            String
+  latitude        Float
+  longitude       Float
+  address         String
+  rating          Float          @default(4.5)
+  reviewCount     Int            @default(0) @map("review_count")
+  priceTier       String         @default("$$") @map("price_tier") // Free, $, $$, $$$
+  priceAmount     Float          @default(0) @map("price_amount")
+  durationMinutes Int            @default(120) @map("duration_minutes")
+  openingHours    String         @default("09:00 - 18:00") @map("opening_hours")
+  imageUrl        String         @map("image_url")
+  tags            String[]
+  isFeatured      Boolean        @default(false) @map("is_featured")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  itineraryItems  ItineraryItem[]
+  savedExperiences SavedExperience[]
+
+  @@index([city])
+  @@index([category])
+  @@index([rating])
+  @@index([latitude, longitude])
+  @@map("experiences")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  icon      String
+  sortOrder Int      @default(0) @map("sort_order")
+
+  @@map("categories")
+}
+
+model Itinerary {
+  id                   String          @id @default(uuid())
+  title                String
+  city                 String
+  date                 String          // YYYY-MM-DD
+  startTime            String          @default("09:00") @map("start_time")
+  totalDurationMinutes Int             @default(0) @map("total_duration_minutes")
+  totalDistanceKm      Float           @default(0) @map("total_distance_km")
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
+
+  items                ItineraryItem[]
+
+  @@index([city])
+  @@index([date])
+  @@map("itineraries")
+}
+
+model ItineraryItem {
+  id                 String     @id @default(uuid())
+  itineraryId        String     @map("itinerary_id")
+  experienceId       String?    @map("experience_id")
+  customTitle        String?    @map("custom_title")
+  startTime          String     @map("start_time") // e.g. "10:00"
+  durationMinutes    Int        @default(120) @map("duration_minutes")
+  sortOrder          Int        @default(0) @map("sort_order")
+  travelTimeMinutes  Int        @default(0) @map("travel_time_minutes")
+  travelDistanceKm   Float      @default(0) @map("travel_distance_km")
+  notes              String?
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+
+  itinerary          Itinerary   @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  experience         Experience? @relation(fields: [experienceId], references: [id], onDelete: SetNull)
+
+  @@index([itineraryId, sortOrder])
+  @@map("itinerary_items")
+}
+
+model SavedExperience {
+  id           String     @id @default(uuid())
+  userId       String     @default("default-user") @map("user_id")
+  experienceId String     @map("experience_id")
+  savedAt      DateTime   @default(now()) @map("saved_at")
+
+  experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, experienceId])
+  @@index([userId])
+  @@map("saved_experiences")
+}
+
+model SyncLog {
+  id             String   @id @default(uuid())
+  idempotencyKey String   @unique @map("idempotency_key")
+  actionType     String   @map("action_type")
+  entityId       String   @map("entity_id")
+  payload        String
+  processedAt    DateTime @default(now()) @map("processed_at")
+
+  @@index([idempotencyKey])
+  @@map("sync_logs")
+}
+
+model GeneratedPlan {
+  id                     String   @id @default(uuid())
+  title                  String
+  summary                String
+  city                   String
+  planJson               String   @map("plan_json")
+  estimatedCost          Float    @default(0) @map("estimated_cost")
+  estimatedTravelMinutes Int      @default(0) @map("estimated_travel_minutes")
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  @@index([city])
+  @@map("generated_plans")
+}
+

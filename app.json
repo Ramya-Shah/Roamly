@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Roamly",
+    "slug": "roamly",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "roamly",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#090D16",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.roamly.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Roamly uses your location to discover experiences near you and curate intelligent, time-optimized city itineraries."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#090D16"
+      },
+      "package": "com.roamly.app",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "name": "Roamly",
+      "shortName": "Roamly"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Roamly uses your location to discover experiences near you."
+        }
+      ],
+      "expo-quick-actions"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
